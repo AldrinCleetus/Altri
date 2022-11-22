@@ -1,0 +1,12 @@
+{
+  "name": "atri",
+  "version": "1.0.0",
+  "description": "Simple command line interface",
+  "main": "shell.js",
+  "type": "module",
+  "scripts": {
+    "test": "node shell.js"
+  },
+  "author": "aldrin",
+  "license": "ISC"
+}
