@@ -1,7 +1,6 @@
 import rLine from 'readline'
 import os from 'os'
 import { fork, execFile, exec, spawn } from 'child_process';
-import { changeDirectory } from './commands.js';
 
 
 const cmd = rLine.createInterface({
@@ -13,7 +12,9 @@ const cmd = rLine.createInterface({
 
 cmd.prompt()
 
-let regex = /cd /i;
+const regex = /cd /i;
+const pwd = /pwd/i;
+const ls = /ls/i
 // On return key press
 
 cmd.on('line',(input)=>{
@@ -36,18 +37,38 @@ cmd.on('line',(input)=>{
                 return
             }
             
-
             process.chdir(input.split(' ')[1])
-            
             cmd.setPrompt(process.cwd() + '>')
             cmd.prompt()
-
-            
-            
 
           })
        
 
+    }
+    
+    if(input.match(pwd)){
+       console.log(process.cwd())
+       cmd.prompt()
+    }
+
+    if(input.match(ls)){
+        const child = exec('dir', (error, stdout, stderr) => {
+            if (error) {
+                console.log(error)
+                cmd.prompt()
+              return
+            }
+
+            if(stderr){
+                console.log(stderr)
+                cmd.prompt()
+                return
+            }
+
+            console.log(stdout)
+            cmd.prompt()
+
+          })
     }
 
     // Running javascript just from file:path
