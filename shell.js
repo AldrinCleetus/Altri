@@ -1,6 +1,6 @@
 import rLine from 'readline'
 import os from 'os'
-import { fork, execFile, exec, spawn } from 'child_process';
+import { fork, execFile, exec, spawn, execSync } from 'child_process';
 
 
 const cmd = rLine.createInterface({
@@ -10,19 +10,25 @@ const cmd = rLine.createInterface({
   });
 
 
+
+process.chdir(os.homedir())
+
+
 cmd.prompt()
 
-const regex = /cd /i;
-const pwd = /pwd/i;
-const ls = /ls/i
+const cd = /cd /i
+const pwd = /pwd/i
+const ls = /ls /i
+const javascript = /.*\.js$/i
+
+
 // On return key press
 
 cmd.on('line',(input)=>{
     cmd.setPrompt(process.cwd() + '>')
-    cmd.prompt()
     
     // cd somewhere
-    if(input.match(regex)){
+    if(input.match(cd)){
 
         const child = exec(input, (error, stdout, stderr) => {
             if (error) {
@@ -52,7 +58,7 @@ cmd.on('line',(input)=>{
     }
 
     if(input.match(ls)){
-        const child = exec('dir', (error, stdout, stderr) => {
+        const child = exec('dir '+ input.split(' ')[1], (error, stdout, stderr) => {
             if (error) {
                 console.log(error)
                 cmd.prompt()
@@ -73,20 +79,40 @@ cmd.on('line',(input)=>{
 
     // Running javascript just from file:path
 
-    // if(input.endsWith('.js')){
-    //     const child = exec('node ' + input, (error, stdout, stderr) => {
-    //         if (error) {
-    //           console.log(error)
-    //         }
+    if(input.match(javascript)){
+        const child = exec('node '+ input, (error, stdout, stderr) => {
+            if (error) {
+              console.log(error)
+            }
 
-    //         if(stderr){
-    //             console.log(stderr)
-    //         }
+            if(stderr){
+                console.log(stderr)
+            }
 
-    //         console.log(stdout);
+            console.log(stdout);
+            console.log(child.pid)
+            cmd.prompt()
+          })
 
-    //       })
-    // }
+
+        // const nodeFile = spawn('node',[input],{
+        //   detached: false,
+        // })
+
+        // nodeFile.stdout.on('data',data=>{
+        //   console.log(data.toString())
+        // })
+
+        // nodeFile.stdout.on('close',code=>{
+        //   console.log(nodeFile.pid)
+        //   console.log("closed")
+        //   cmd.prompt()
+        // })
+        
+    }
+
+    cmd.prompt()
+    
 
 })
 
