@@ -1,6 +1,6 @@
 import rLine from 'readline'
 import os from 'os'
-import { changeDirectory, executeBinary, listAllFiles, presentWorkingDirectory , testing} from './commands.js';
+import { changeDirectory,setForeground, executeBinary, listAllFiles, presentWorkingDirectory , processRunning} from './commands.js';
 
 
 
@@ -21,12 +21,14 @@ const commands = {
   pwd : /pwd/i,
   ls : /ls/i,
   javascript : /.*\.js$/i,
-  bash: /.*\.sh$/i
+  bash: /.*\.sh$/i,
+  fg: /fg [0-9]/i,
 }
 
 // On return key press
 
 cmd.on('line',(input)=>{
+
     cmd.setPrompt(process.cwd() + '>')
 
 
@@ -46,6 +48,9 @@ cmd.on('line',(input)=>{
       case commands.bash.test(input):
         executeBinary(cmd,input)
         break
+      case commands.fg.test(input):
+        setForeground(cmd,input)
+        break
       default:
         cmd.prompt()
         break
@@ -53,13 +58,21 @@ cmd.on('line',(input)=>{
 
 })
 
-
+// Ctrl + Z
 cmd.on('SIGTSTP',()=>{
-  console.log('caught sigstop')
+
+  // Get the latest running process and adds to the background
+  const lastProcess = processRunning.slice(-1)[0]
+  lastProcess.processRef.kill('SIGTSTP')
+  console.log(lastProcess.processId)
+  cmd.prompt()
   
-  testing[0].processRef.kill('SIGTSTP')     
-  //testing[0].processRef.kill('SIGCONT')     
+  // processRunning[0].processRef.kill('SIGTSTP')     
+  // processRunning[0].processRef.kill('SIGCONT')     
    
 
 })
+
+
+
 
