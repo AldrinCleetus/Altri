@@ -1,6 +1,6 @@
 import rLine from 'readline'
 import os from 'os'
-import { changeDirectory, listAllFiles, presentWorkingDirectory, runNodejs } from './commands.js';
+import { changeDirectory, listAllFiles, presentWorkingDirectory, runBashScript, runNodejs } from './commands.js';
 
 
 const cmd = rLine.createInterface({
@@ -12,20 +12,15 @@ const cmd = rLine.createInterface({
 
 // Default working directory to user's home directory
 process.chdir(os.homedir())
-
-
 cmd.prompt()
 
-const cd = /cd /i
-const pwd = /pwd/i
-const ls = /ls /i
-const javascript = /.*\.js$/i
 
 const commands = {
   cd: /cd /i,
   pwd : /pwd/i,
   ls : /ls/i,
   javascript : /.*\.js$/i,
+  bash: /.*\.sh$/i
 }
 
 // On return key press
@@ -46,6 +41,9 @@ cmd.on('line',(input)=>{
         break
       case commands.javascript.test(input):
         runNodejs(cmd,input)
+        break
+      case commands.bash.test(input):
+        runBashScript(cmd,input)
         break
       default:
         cmd.prompt()
