@@ -1,15 +1,11 @@
 import { exec, spawn } from 'child_process';
 
 const isWindows = process.platform === 'win32'
-
-
 const processRunning = []
 
 const executeBinary = (cmd,input)=>{
 
-  
   const commands = input.split(' ') 
-  console.log("executing ",commands[0])
   
   if(commands[1]== undefined){
     cmd.prompt()
