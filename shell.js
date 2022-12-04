@@ -1,6 +1,6 @@
 import rLine from 'readline'
 import os from 'os'
-import { changeDirectory, executeBinary, listAllFiles, presentWorkingDirectory , test} from './commands.js';
+import { changeDirectory, executeBinary, listAllFiles, presentWorkingDirectory , testing} from './commands.js';
 
 
 
@@ -53,8 +53,13 @@ cmd.on('line',(input)=>{
 
 })
 
-cmd.on('SIGTSTP', () => {
-  console.log('Caught SIGTSTP.');
-})
 
+cmd.on('SIGTSTP',()=>{
+  console.log('caught sigstop')
+  
+  testing[0].processRef.kill('SIGTSTP')     
+  //testing[0].processRef.kill('SIGCONT')     
+   
+
+})
 

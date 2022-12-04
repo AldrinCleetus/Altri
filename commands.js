@@ -3,6 +3,7 @@ import { exec, spawn } from 'child_process';
 const isWindows = process.platform === 'win32'
 
 
+const testing = []
 
 const test = (cmd,input)=>{
   console.log("hih")
@@ -22,7 +23,13 @@ const executeBinary = (cmd,input)=>{
   const pathToBinary = commands[0]
   commands.shift()
 
+
   const child = spawn(pathToBinary,commands)
+
+  testing.push({
+    processId: child.pid,
+    processRef: child
+  })
 
   child.stdout.on("data", async data=>{
       console.log(data.toString())
@@ -103,4 +110,4 @@ const listAllFiles = (cmd,input)=>{
       })
 }
 
-export { changeDirectory,presentWorkingDirectory,listAllFiles, executeBinary,test }
+export { changeDirectory,presentWorkingDirectory,listAllFiles, executeBinary,testing }
