@@ -1,6 +1,7 @@
 import rLine from 'readline'
 import os from 'os'
-import { changeDirectory, listAllFiles, presentWorkingDirectory, runBashScript, runNodejs } from './commands.js';
+import { changeDirectory, executeBinary, listAllFiles, presentWorkingDirectory , test} from './commands.js';
+
 
 
 const cmd = rLine.createInterface({
@@ -40,10 +41,10 @@ cmd.on('line',(input)=>{
         listAllFiles(cmd,input)
         break
       case commands.javascript.test(input):
-        runNodejs(cmd,input)
+        executeBinary(cmd,input)
         break
       case commands.bash.test(input):
-        runBashScript(cmd,input)
+        executeBinary(cmd,input)
         break
       default:
         cmd.prompt()
@@ -52,5 +53,8 @@ cmd.on('line',(input)=>{
 
 })
 
+cmd.on('SIGTSTP', () => {
+  console.log('Caught SIGTSTP.');
+})
 
 

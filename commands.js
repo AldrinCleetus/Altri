@@ -3,19 +3,40 @@ import { exec, spawn } from 'child_process';
 const isWindows = process.platform === 'win32'
 
 
-const runBashScript = (cmd,input)=>{
-  const child = exec('bash '+ input, (error, stdout, stderr) => {
-    if (error) {
-      console.log(error)
-    }
 
-    if(stderr){
-        console.log(stderr)
-    }
+const test = (cmd,input)=>{
+  console.log("hih")
+}
 
-    console.log(stdout);
+const executeBinary = (cmd,input)=>{
+
+  
+  const commands = input.split(' ') 
+  console.log("executing ",commands[0])
+  
+  if(commands[1]== undefined){
     cmd.prompt()
+    return
+  }
+
+  const pathToBinary = commands[0]
+  commands.shift()
+
+  const child = spawn(pathToBinary,commands)
+
+  child.stdout.on("data", async data=>{
+      console.log(data.toString())
   })
+
+  child.stderr.on('data',(data)=>{
+    console.log(data.toString())
+  })
+
+  child.on('close', (code)=>{
+    cmd.prompt()
+
+  })
+
 }
 
 const changeDirectory = (cmd,input)=>{
@@ -45,7 +66,6 @@ const changeDirectory = (cmd,input)=>{
     })
   }
 
-
 const presentWorkingDirectory = (cmd,input)=>{
     console.log(process.cwd())
     cmd.prompt()
@@ -54,14 +74,14 @@ const presentWorkingDirectory = (cmd,input)=>{
 const listAllFiles = (cmd,input)=>{
   
     let lsCommand = input
-    
+ 
     if(isWindows){
 
       lsCommand = 'dir'
-
       if(!input.split(' ')[1] === undefined){
           lsCommand = 'dir '+ input.split(' ')[1]
       }
+
     }
 
     const child = exec(lsCommand, (error, stdout, stderr) => {
@@ -83,24 +103,4 @@ const listAllFiles = (cmd,input)=>{
       })
 }
 
-const runNodejs = (cmd,input)=>{
-
-    const nodeCommands = input.split(' ') 
-
-    if(nodeCommands[1]== undefined){
-      cmd.prompt()
-      return
-    }
-
-    const child = spawn(nodeCommands[0],[nodeCommands[1]])
-
-    child.stdout.on("data", async data=>{
-       console.log(data.toString())
-    })
-
-    child.on('close', (code)=>{
-      cmd.prompt()
-    })
-
-}
-  export { changeDirectory,presentWorkingDirectory,listAllFiles, runNodejs, runBashScript }
+export { changeDirectory,presentWorkingDirectory,listAllFiles, executeBinary,test }
