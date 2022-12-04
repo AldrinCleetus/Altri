@@ -107,15 +107,19 @@ const listAllFiles = (cmd,input)=>{
 const setForeground = (cmd,input)=>{
 
   const id = input.split(' ')[1]
-  console.log(id)
 
   const objectFromId = processRunning.find(object => {
     object.processId === id 
     return object
   })
 
-  objectFromId.processRef.kill('SIGCONT')
+  if(objectFromId !== undefined){
+    objectFromId.processRef.kill('SIGCONT')
+  }else{
+    cmd.prompt()
+  }
 
+  
 
 }
 

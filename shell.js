@@ -80,10 +80,10 @@ cmd.on('SIGINT', () => {
   if(lastProcess === undefined){
     return
   }
-   
+  // Kill the process
   lastProcess.processRef.kill('SIGTERM')
+  // Remove it from the process list
   processRunning.pop()
-  console.log(processRunning)
   cmd.prompt()
 })
 
