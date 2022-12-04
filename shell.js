@@ -23,6 +23,7 @@ const commands = {
   javascript : /.*\.js$/i,
   bash: /.*\.sh$/i,
   fg: /fg [0-9]/i,
+  exit: /exit/i
 }
 
 // On return key press
@@ -51,6 +52,9 @@ cmd.on('line',(input)=>{
       case commands.fg.test(input):
         setForeground(cmd,input)
         break
+      case commands.exit.test(input):
+        cmd.pause()
+        break
       default:
         cmd.prompt()
         break
@@ -67,12 +71,21 @@ cmd.on('SIGTSTP',()=>{
   console.log(lastProcess.processId)
   cmd.prompt()
   
-  // processRunning[0].processRef.kill('SIGTSTP')     
-  // processRunning[0].processRef.kill('SIGCONT')     
-   
-
 })
 
+// Ctrl + C
+cmd.on('SIGINT', () => {
+  const lastProcess = processRunning.slice(-1)[0]
+
+  if(lastProcess === undefined){
+    return
+  }
+   
+  lastProcess.processRef.kill('SIGTERM')
+  processRunning.pop()
+  console.log(processRunning)
+  cmd.prompt()
+})
 
 
 
